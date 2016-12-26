@@ -42,8 +42,8 @@ namespace Controller_20161221.Models
             var document = new BsonDocument
             {
                 {"trnID", TrnId},
-                {"processStep", ProcessStep },
-                {"agencyCode", AgencyCode },
+                {"ProcessStep", ProcessStep },
+                {"AgencyCode", AgencyCode },
                 {"UserId", UserId },
                 {"ProposalNo",ProposalNo },
                 {"CustomerName",CustomerName },
@@ -71,7 +71,7 @@ namespace Controller_20161221.Models
         {
             BsonDocument filter;
             List<BsonDocument> resultList;
-            string kk;
+           
 
             filter = BsonDocument.Parse(strFilter);
             resultList = _collection.Find(filter).ToList();
@@ -87,10 +87,19 @@ namespace Controller_20161221.Models
 
             filter = BsonDocument.Parse(strFilter);
             resultList = _collection.Find(filter).ToList();
-
             for (i = 0; i < resultList.Count; i++)
             {
-
+                TrnId=resultList[i].GetValue(0).AsObjectId;
+                ProcessStep= resultList[i].GetValue(2).AsString;
+                AgencyCode = resultList[i].GetValue(3).AsString;
+                UserId = resultList[i].GetValue(4).AsString;
+                ProposalNo = resultList[i].GetValue(5).AsString;
+                CustomerName = resultList[i].GetValue(6).AsString;
+                CustomerSurname = resultList[i].GetValue(7).AsString;
+                ProductName = resultList[i].GetValue(8).AsString;
+                ProposalDate = resultList[i].GetValue(9).AsUniversalTime;
+                ValidDays = resultList[i].GetValue(10).AsInt32;
+                myList.Add(this);
             }
             return (myList);
         }

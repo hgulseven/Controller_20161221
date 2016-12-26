@@ -15,7 +15,9 @@ namespace Controller_20161221.Controllers
     public class HomeController : Controller
     {
         screenParts menuAndFunctions;
-        public List<ListTasks> Tasks = null;
+        public List<NOSQL_Interface>  Tasks = null;
+        NOSQL_Interface myInterface;
+
 
 
         public HomeController(IOptions<MyOptions> o)
@@ -44,28 +46,28 @@ namespace Controller_20161221.Controllers
             string filter;
             string SortFieldName = "";
             string SortOrder = "";
-            NOSQL_Interface myInterface;
-
-            myInterface = new NOSQL_Interface();
-            myInterface.NOSQL_connect();
-
 
             if (Tasks == null)
             {
                 try
                 {
+                    myInterface = new NOSQL_Interface();
+                    myInterface.NOSQL_connect();
 
                     StringBuilder sb = new StringBuilder();
                     StringWriter sw = new StringWriter(sb);
                     JsonWriter jsonWriter = new JsonTextWriter(sw);
                     jsonWriter.WriteStartObject();
-                    jsonWriter.WritePropertyName("ProposalNo");
-                    jsonWriter.WriteValue("2016000001001");
+                    jsonWriter.WritePropertyName("UserId");
+                    jsonWriter.WriteValue("hgulseven");
+                    jsonWriter.WritePropertyName("ProcessStep");
+                    jsonWriter.WriteValue("Teklif");
+
                     jsonWriter.WriteEndObject();
 
                     filter = sw.ToString();
-                    List<string> kk = myInterface.noSQL_getListOfDocuments(filter);
-
+                    Tasks = myInterface.noSQL_getListOfDocuments(filter);
+/*
                     //Get data from database
                     Tasks = new List<Models.ListTasks>()
                 {
@@ -73,6 +75,7 @@ namespace Controller_20161221.Controllers
                     new Models.ListTasks() { ProcessStep="Tahsilat",AgencyId="1000",UserId="hgulseven", ProposalNo="2016000001002",CustomerName="Ege",CustomerSurname="Gülseven",ProductName="Trafik" },
                     new Models.ListTasks() { ProcessStep="Poliçeleştirme",AgencyId="1000",UserId="hgulseven", ProposalNo="2016000001003",CustomerName="Merih",CustomerSurname="Gülseven",ProductName="Yangın" }
                 };
+*/
                 }
                 catch (Exception ex)
                 {
@@ -86,19 +89,19 @@ namespace Controller_20161221.Controllers
                 switch (SortFieldName)
                 {
                     case "processStep":
-                        Tasks.Sort(Models.ListTasks.compareByProcessStep);
+                        Tasks.Sort(Models.NOSQL_Interface.compareByProcessStep);
                         break;
                     case "proposalNo":
-                        Tasks.Sort(Models.ListTasks.compareByProposalNo);
+                        Tasks.Sort(Models.NOSQL_Interface.compareByProposalNo);
                         break;
                     case "customerName":
-                        Tasks.Sort(Models.ListTasks.compareByCustomerName);
+                        Tasks.Sort(Models.NOSQL_Interface.compareByCustomerName);
                         break;
                     case "customerSurName":
-                        Tasks.Sort(Models.ListTasks.compareByCustomerSurName);
+                        Tasks.Sort(Models.NOSQL_Interface.compareByCustomerSurName);
                         break;
                     case "productName":
-                        Tasks.Sort(Models.ListTasks.compareByProductName);
+                        Tasks.Sort(Models.NOSQL_Interface.compareByProductName);
                         break;
                 }
             }

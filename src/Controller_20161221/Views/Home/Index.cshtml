@@ -112,40 +112,47 @@
                     deleteAction: '/Actions/DeleteOrder'
                 },
                 fields: {
-                    'agencyID': {
+                    'AgencyCode': {
                         key: true,
                         list: false
                     },
-                    'userId': {
+                    'UserId': {
                         key: true,
                         list: false
                     },
-                    'processStep':{
+                    'ProcessStep':{
                         title:'Process Step',
                         width:'10%',
 
                     },
-                    'proposalNo': {
+                    'ProposalNo': {
                         title: 'Pol/Proposal No',
                         width: '15%'
                     },
-                    'customerName': {
+                    'CustomerName': {
                         title: 'Name',
                         width: '15%'
                     },
-                    'customerSurname': {
+                    'CustomerSurname': {
                         title: 'Surname',
                         width: '20%'
                     },
-                    'productName': {
+                    'ProductName': {
                         title: 'Product Name',
                         width: '10%'
                     },
-                    'proposalDate': {
+                    'ProposalDate': {
                         title : 'Proposal Date',
                         width:'10%',
                         type:'date',
+                    },
+                    'ValidDays': {
+                        title: 'Valid Days',
+                        width: '10%',
                     }
+
+
+
                 },
                 selectionChanged: function () {
                     //Get all selected rows
