@@ -1,0 +1,19 @@
+{
+  "name": "asp.net",
+  "private": true,
+  "dependencies": {
+    "bootstrap": "3.3.6",
+    "jquery-validation": "1.14.0",
+    "jquery-validation-unobtrusive": "3.2.6",
+    "css-hamburgers": "0.5.0",
+    "jQuery.mmenu": "5.6.3",
+    "jquery-mobile": "1.4.5",
+    "jquery-ui": "1.11.4",
+    "jquery": "2.2.3",
+      "jtable": "2.4.0"
+  },
+  "resolutions": {
+    "jquery": ">=1.8",
+    "jquery-ui": "1.11.4"
+  }
+}

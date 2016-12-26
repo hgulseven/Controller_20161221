@@ -1,0 +1,214 @@
+﻿@model screenParts
+@using Microsoft.AspNetCore.Identity
+@using Controller_20161221.Models
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+<script type="text/javascript">
+
+         $(document).ready(function () {
+            var $wndw = $(window),
+		$html = $('html'),
+		$body = $('body'),
+		$both = $('body, html');
+
+            $(document).ready(function () {
+                $("#my-menu").mmenu();
+            });
+
+            if ($.fn.mmenu) {
+
+                var API = $("#my-menu")
+                    .mmenu({
+                        extensions: ['widescreen', 'theme-black', 'effect-menu-slide'],
+                        counters: true,
+                        dividers: {
+                            fixed: true
+                        },
+                        navbar: {
+                            title: 'My Menu'
+                        },
+                        navbars: [
+                            {
+                                position: 'top',
+                                content: ['searchfield']
+                            }, {
+                                position: 'top'
+                            }, {
+                                position: 'bottom',
+                            }
+                        ],
+                        searchfield: {
+                            resultsPanel: true
+                        },
+                        setSelected: {
+                            parent: true
+                        }
+
+                    }, {
+                        searchfield: {
+                            clear: true
+                        }
+
+                    })
+                    .data("mmenu");
+
+                var $burger = $("#hamburger")
+                   .on("click",
+                       function (e) {
+                           e.preventDefault();
+                           if ($html.hasClass("mm-opened")) {
+                               API.close();
+                           }
+                           else {
+                               API.open();
+                           }
+                       }
+                   )
+                   .children(".hamburger");
+                API.bind('closed', function () {
+                    setTimeout(function () {
+                        $burger.removeClass('is-active');
+                    }, 100);
+                });
+                API.bind('opened', function () {
+                    setTimeout(function () {
+                        $burger.addClass('is-active');
+                    }, 100);
+                });
+            }
+
+            $('#TaskListContainer').jtable({
+                title: 'Task List',
+                paging: true, //Enable paging
+                pageSize: 10, //Set page size (default: 10)
+                sorting: true, //Enable sorting
+                selecting: true, //Enable selecting
+                multiselect: true, //Allow multiple selecting
+                selectingCheckboxes: true, //Show checkboxes on first column
+                toolbar: {
+                    items: [{
+                        icon: '/images/excel.png',
+                        text: 'Export to Excel',
+                        click: function () {
+                            //perform your custom job...
+                        }
+                    }, {
+                        icon: '/images/pdf.png',
+                        text: 'Export to Pdf',
+                        click: function () {
+                            //perform your custom job...
+                        }
+                    }]
+                },
+                actions: {
+                    listAction: '/Home/ListTasks',
+                    updateAction: '/Actions/UpdateOrder',
+                    deleteAction: '/Actions/DeleteOrder'
+                },
+                fields: {
+                    'agencyID': {
+                        key: true,
+                        list: false
+                    },
+                    'userId': {
+                        key: true,
+                        list: false
+                    },
+                    'processStep':{
+                        title:'Process Step',
+                        width:'10%',
+
+                    },
+                    'proposalNo': {
+                        title: 'Pol/Proposal No',
+                        width: '15%'
+                    },
+                    'customerName': {
+                        title: 'Name',
+                        width: '15%'
+                    },
+                    'customerSurname': {
+                        title: 'Surname',
+                        width: '20%'
+                    },
+                    'productName': {
+                        title: 'Product Name',
+                        width: '10%'
+                    },
+                    'proposalDate': {
+                        title : 'Proposal Date',
+                        width:'10%',
+                        type:'date',
+                    }
+                },
+                selectionChanged: function () {
+                    //Get all selected rows
+                    var $selectedRows = $('#TaskListContainer').jtable('selectedRows');
+
+                    $('#SelectedRowList').empty();
+                    if ($selectedRows.length > 0) {
+                        //Show selected rows
+                        $selectedRows.each(function () {
+                            var record = $(this).data('record');
+                            $('#SelectedRowList').append(
+                            '<b>proposalNo</b>: ' + record.proposalNo +
+                            '<br /><b>CustomerName</b>:' + record.customerName + '<br /><br />'
+                            );
+                        });
+                    } else {
+                        //No rows selected
+                        $('#SelectedRowList').append('No row selected! Select rows to see here...');
+                    }
+                },
+            });
+            $('#TaskListContainer').jtable('load');
+         });
+
+</script>
+
+<div id="TaskListContainer"></div>
+<div id="SelectedRowList"></div>
+
+<nav id="my-menu">
+    <ul class="listview-icons">
+        @if (SignInManager.IsSignedIn(User))
+        {
+            <li><a href="/Home">Home</a></li>
+            <li>
+                <a href="/about/">New Proposal</a>
+                <ul class="Vertical">
+                    <li><a href="/about/history/">Motor</a></li>
+                    <li><a href="/about/team/">Home</a></li>
+                    <li><a href="/about/address/">Health</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="/">Filters</a>
+                <ul class="Vertical">
+                    <li><a href="/">To Do List</a></li>
+                    <li><a href="/">My Tasks</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="/">User</a>
+                <ul class="Vertical">
+                    <li><a href="/Account/LogOff" >Logoff</a></li>
+                    <li><a href="/Account/login">Login</a></li>
+                    <li><a href="/Account/Register">Register</a></li>
+                </ul>
+            </li>
+
+        }
+        else
+        {
+            <li><a asp-area="" asp-controller="Account" asp-action="Register">Register</a></li>
+            <li><a asp-area="" asp-controller="Account" asp-action="Login">Log in</a></li>
+        }
+    </ul>
+</nav>
