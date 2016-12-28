@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MongoDB.Driver;
 using MongoDB.Bson;
-using Newtonsoft.Json;
+using MongoDB.Bson.IO;
 
 namespace Controller_20161221.Models
 {
     public class NOSQL_Interface
     {
+        const int _JSON_CREATION_ERROR = 1;
+
         protected static IMongoClient _client;
         protected static IMongoDatabase _database;
         protected static IMongoCollection<BsonDocument> _collection;
@@ -39,34 +39,10 @@ namespace Controller_20161221.Models
         {
             int i;
 
-            var document = new BsonDocument
-            {
-                {"trnID", TrnId},
-                {"ProcessStep", ProcessStep },
-                {"AgencyCode", AgencyCode },
-                {"UserId", UserId },
-                {"ProposalNo",ProposalNo },
-                {"CustomerName",CustomerName },
-                {"CustomerSurname", CustomerSurname},
-                {"ProductName",ProductName},
-                {"ProposalDate",ProposalDate },
-                {"ValidDays",ValidDays }
-            };
             var varBsonDoc = varJsonStr.ToBsonDocument();
-            int elementCount=varBsonDoc.Count();
-            for (i = 0; i < elementCount; i++)
-            {
-                document.Append(varBsonDoc.GetElement(i));
-            }
-            _collection.InsertOne(document);
+            _collection.InsertOne(varBsonDoc);
         }
-
-        public void NOSQL_Insert(BsonDocument doc)
-        {
-            _collection.InsertOne(doc);
-
-        }
-
+/* Returns first occurence of filtered records    */
           public string NOSQL_getDocument(string strFilter)
         {
             BsonDocument filter;
@@ -78,30 +54,31 @@ namespace Controller_20161221.Models
             return(resultList[0].ToJson());
         }
 
-        public List<NOSQL_Interface> noSQL_getListOfDocuments(string strFilter)
+        public string noSQL_getListOfDocuments(string strFilter,ref int error,ref int noOfRecords,int startIndex,int pageSize)
         {
             BsonDocument filter;
             List<BsonDocument> resultList;
-            List<NOSQL_Interface> myList = new List<NOSQL_Interface>();
-            int i;
+            string retJsonString;
 
-            filter = BsonDocument.Parse(strFilter);
-            resultList = _collection.Find(filter).ToList();
-            for (i = 0; i < resultList.Count; i++)
+            error = 0;
+            try
             {
-                TrnId=resultList[i].GetValue(0).AsObjectId;
-                ProcessStep= resultList[i].GetValue(2).AsString;
-                AgencyCode = resultList[i].GetValue(3).AsString;
-                UserId = resultList[i].GetValue(4).AsString;
-                ProposalNo = resultList[i].GetValue(5).AsString;
-                CustomerName = resultList[i].GetValue(6).AsString;
-                CustomerSurname = resultList[i].GetValue(7).AsString;
-                ProductName = resultList[i].GetValue(8).AsString;
-                ProposalDate = resultList[i].GetValue(9).AsUniversalTime;
-                ValidDays = resultList[i].GetValue(10).AsInt32;
-                myList.Add(this);
+                filter = BsonDocument.Parse(strFilter);
+                resultList= _collection.Find(filter).Limit(pageSize).Skip(startIndex).ToList();
+                noOfRecords=(int)_collection.Count(filter);
+                JsonWriterSettings writerSettings = new JsonWriterSettings();
+                writerSettings.OutputMode = (JsonOutputMode)0;
+
+                MongoDB.Bson.Serialization.BsonSerializationArgs arg = default(MongoDB.Bson.Serialization.BsonSerializationArgs);
+                Type nominalType=resultList.GetType();
+                retJsonString=resultList.ToJson(nominalType,writerSettings,null,null, arg);
             }
-            return (myList);
+            catch (Exception ex)
+            {
+                error = _JSON_CREATION_ERROR;
+                return (ex.Message);
+            }
+           return (retJsonString);
         }
         public void NOSQL_Close()
         {

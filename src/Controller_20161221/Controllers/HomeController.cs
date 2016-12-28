@@ -15,7 +15,7 @@ namespace Controller_20161221.Controllers
     public class HomeController : Controller
     {
         screenParts menuAndFunctions;
-        public List<NOSQL_Interface>  Tasks = null;
+        public List<ListTasks>  Tasks = null;
         NOSQL_Interface myInterface;
 
 
@@ -41,51 +41,59 @@ namespace Controller_20161221.Controllers
 
         [HttpPost]
         [HttpGet]
-        public JsonResult ListTasks(int jtStartIndex = 0, int jtPageSize = 0, string jtSorting = null)
+        public string ListTasks(int jtStartIndex = 0, int jtPageSize = 0, string jtSorting = null)
         {
-            string filter;
+            string filter=null;
             string SortFieldName = "";
             string SortOrder = "";
+            int error=0;
+            string records=null;
+            string retval=null;
+            int noOfRecords = 0;
 
             if (Tasks == null)
             {
                 try
                 {
+                    
                     myInterface = new NOSQL_Interface();
                     myInterface.NOSQL_connect();
-
                     StringBuilder sb = new StringBuilder();
                     StringWriter sw = new StringWriter(sb);
                     JsonWriter jsonWriter = new JsonTextWriter(sw);
                     jsonWriter.WriteStartObject();
-                    jsonWriter.WritePropertyName("UserId");
+                    jsonWriter.WritePropertyName("userId");
                     jsonWriter.WriteValue("hgulseven");
-                    jsonWriter.WritePropertyName("ProcessStep");
+                    jsonWriter.WritePropertyName("processStep");
                     jsonWriter.WriteValue("Teklif");
-
                     jsonWriter.WriteEndObject();
-
                     filter = sw.ToString();
-                    Tasks = myInterface.noSQL_getListOfDocuments(filter);
-/*
-                    //Get data from database
-                    Tasks = new List<Models.ListTasks>()
-                {
-                    new Models.ListTasks() {ProcessStep="Teklif",AgencyId="1000",UserId="hgulseven", ProposalNo="2016000001001",CustomerName="Hakan",CustomerSurname="Gülseven",ProductName="Kasko" },
-                    new Models.ListTasks() { ProcessStep="Tahsilat",AgencyId="1000",UserId="hgulseven", ProposalNo="2016000001002",CustomerName="Ege",CustomerSurname="Gülseven",ProductName="Trafik" },
-                    new Models.ListTasks() { ProcessStep="Poliçeleştirme",AgencyId="1000",UserId="hgulseven", ProposalNo="2016000001003",CustomerName="Merih",CustomerSurname="Gülseven",ProductName="Yangın" }
-                };
-*/
+
+                    records= myInterface.noSQL_getListOfDocuments(filter, ref error,ref noOfRecords,jtStartIndex,jtPageSize);
+
+                    sb = new StringBuilder();
+                    sw = new StringWriter(sb);
+                    jsonWriter = new JsonTextWriter(sw);
+                    jsonWriter.WriteStartObject();
+                    jsonWriter.WritePropertyName("result");
+                    jsonWriter.WriteValue("OK");
+                    jsonWriter.WritePropertyName("records");
+                    jsonWriter.WriteRawValue(records);
+                    jsonWriter.WritePropertyName("TotalRecordCount");
+                    jsonWriter.WriteValue(noOfRecords);
+                    jsonWriter.WriteEndObject();
+                    retval= sw.ToString();
                 }
                 catch (Exception ex)
                 {
-                    return Json(new { Result = "ERROR", Message = ex.Message });
+                    return ("");/* Json(new { Result = "ERROR", Message = ex.Message });*/
                 }
             }
             if (jtSorting != null)
             {
                 SortFieldName = jtSorting.Substring(0, jtSorting.LastIndexOf(' '));
                 SortOrder = jtSorting.Substring(jtSorting.LastIndexOf(' ') + 1, 3);
+/*
                 switch (SortFieldName)
                 {
                     case "processStep":
@@ -104,13 +112,15 @@ namespace Controller_20161221.Controllers
                         Tasks.Sort(Models.NOSQL_Interface.compareByProductName);
                         break;
                 }
+*/
             }
             if (SortOrder.CompareTo("DES") == 0)
             {
                 Tasks.Reverse();
             }
             //Return result to jTable
-            return Json(new { Result = "OK", Records = Tasks, TotalRecordCount = Tasks.Count });
+            return (retval);
+/*            return Json(new { Result = "OK", Records = Tasks, TotalRecordCount = Tasks.Count });*/
 
         }
 

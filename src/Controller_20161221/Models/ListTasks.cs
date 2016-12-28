@@ -7,34 +7,36 @@ namespace Controller_20161221.Models
 {
     public class ListTasks
     {
-        public string ProcessStep { get; set; }
-        public string AgencyId { get; set; }
-        public string UserId { get; set; }
-        public string ProposalNo { get; set; }
-        public string CustomerName { get; set; }
-        public string CustomerSurname { get; set; }
-        public string ProductName { get; set; }
+        public string processStep { get; set; }
+        public string agencyCode { get; set; }
+        public string userId { get; set; }
+        public string proposalNo { get; set; }
+        public string customerName { get; set; }
+        public string customerSurname { get; set; }
+        public string productName { get; set; }
+        public DateTime proposalDate { get; set; }
+        public int validDays { get; set; }
 
         public static int compareByProcessStep(ListTasks item1, ListTasks item2)
         {
-            return item1.ProcessStep.CompareTo(item2.ProcessStep);
+            return item1.processStep.CompareTo(item2.processStep);
         }
 
         public static int compareByProposalNo(ListTasks item1, ListTasks item2)
         {
-            return item1.ProposalNo.CompareTo(item2.ProposalNo);
+            return item1.proposalNo.CompareTo(item2.proposalNo);
         }
         public static int compareByCustomerName(ListTasks item1, ListTasks item2)
         {
-            return item1.CustomerName.CompareTo(item2.CustomerName);
+            return item1.customerName.CompareTo(item2.customerName);
         }
         public static int compareByCustomerSurName(ListTasks item1, ListTasks item2)
         {
-            return item1.CustomerSurname.CompareTo(item2.CustomerSurname);
+            return item1.customerSurname.CompareTo(item2.customerSurname);
         }
         public static int compareByProductName(ListTasks item1, ListTasks item2)
         {
-            return item1.ProductName.CompareTo(item2.ProductName);
+            return item1.productName.CompareTo(item2.productName);
         }
     }
 }
